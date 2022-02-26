@@ -30,10 +30,18 @@ class VehicleModel {
 
     vehicle.serie = json['serie'] ?? '';
     vehicle.placas = json['placas'] ?? '';
-    vehicle.brandId = int.parse((json['brand_id'] ?? 0).toString());
-    vehicle.brandName = json['brand_name'] ?? '';
+
+    if (json['model'] != null) {
+      vehicle.brandId = int.parse((json['model']['id_marca'] ?? 0).toString());
+      vehicle.model = json['model']['description'] ?? '';
+
+      if (json['model']['marca'] != null) {
+        vehicle.brandName = json['model']['marca']['description'] ?? '';
+      }
+    }
+    
     vehicle.kilometraje = int.parse((json['kilometraje'] ?? 0).toString());
-    vehicle.model = json['model'] ?? '';
+    
     vehicle.motor = json['motor'] ?? '';
     vehicle.year = int.parse((json['year'] ?? 0).toString());
     vehicle.color = json['color'] ?? '';

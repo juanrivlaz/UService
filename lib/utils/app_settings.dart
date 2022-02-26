@@ -12,7 +12,7 @@ class AppSettings {
   bool envprod = false;
 
   AppSettings() {
-    this.apiUrl = '192.168.0.20:90';
+    this.apiUrl = '192.168.15.8:90';
 
     this.appTheme = ThemeData(
         primaryColor: Color.fromRGBO(19, 81, 216, 1),

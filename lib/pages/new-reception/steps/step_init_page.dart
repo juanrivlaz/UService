@@ -14,7 +14,12 @@ double width(BuildContext context) {
       : MediaQuery.of(context).size.width;
 }
 
-Widget init(BuildContext context, ReceptionBloc bloc, List<TypeServiceModel> typesService) {
+Widget init(
+  BuildContext context,
+  ReceptionBloc bloc,
+  List<TypeServiceModel> typesService,
+  Function addAuto
+) {
   return SingleChildScrollView(
     physics: BouncingScrollPhysics(),
     child: Column(
@@ -74,9 +79,18 @@ Widget init(BuildContext context, ReceptionBloc bloc, List<TypeServiceModel> typ
         ),
         Container(
           margin: EdgeInsets.all(25),
-          child: Text(
-            'Buscar vehiculo',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+          child: Row(
+            children: [
+              Expanded(
+                child: Center(
+                  child: Text(
+                    'Buscar vehiculo',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                  ),
+                )
+              ),
+              IconButton(onPressed: addAuto, icon: Icon(Icons.add_circle, size: 30))
+            ]
           ),
         ),
         Container(

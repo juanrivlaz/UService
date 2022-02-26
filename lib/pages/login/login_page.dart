@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:uService/pages/login/bloc/login_bloc.dart';
 import 'package:uService/pages/login/widget/button_submit.dart';
 import 'package:uService/pages/login/widget/input_password.dart';

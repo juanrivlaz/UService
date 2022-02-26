@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:uService/pages/new-reception/bloc/auto_bloc.dart';
 import 'package:uService/pages/new-reception/steps/step_aditional_page.dart';
 import 'package:uService/pages/new-reception/steps/step_check_page.dart';
 import 'package:uService/pages/new-reception/steps/step_client_page.dart';
 import 'package:uService/pages/new-reception/steps/step_init_page.dart';
 import 'package:uService/pages/new-reception/steps/step_km_page.dart';
 import 'package:uService/pages/new-reception/steps/step_package_page.dart';
+import 'package:uService/pages/new-reception/widget/dialog_create_auto.dart';
 import 'package:uService/pages/new-reception/widget/indicator_step.dart';
 import 'package:uService/services/process/reception_vehicle_process.dart';
 import 'package:uService/utils/preference_user.dart';
@@ -16,7 +17,10 @@ class NewReceptionPage extends StatefulWidget {
 }
 
 class NewReceptionState extends State<NewReceptionPage>
-    with ReceptionVehicleProcess {
+    with ReceptionVehicleProcess 
+{
+
+  AutoBloc autoBloc = new AutoBloc();
   PreferencesUser pref = new PreferencesUser();
   PageController _pageController = PageController(initialPage: 0);
   double _currentPage = 0.0;
@@ -56,6 +60,24 @@ class NewReceptionState extends State<NewReceptionPage>
   void previous() => animateScroll(this._currentPage.round() - 1);
 
   void pageChange(int value) => setState(() => this._currentPage = value * 1.0);
+
+  void addAuto() async {
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext ctx) => dialogCreateAuto(
+        context, 
+        autoBloc,
+        marcas,
+        () {
+          print(autoBloc.toJson());
+        },
+        () => {
+          Navigator.of(context).pop()
+        }
+      )
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +143,12 @@ class NewReceptionState extends State<NewReceptionPage>
                                     controller: this._pageController,
                                     onPageChanged: this.pageChange,
                                     children: [
-                                      init(context, this.bloc, this.typesService),
+                                      init(
+                                        context,
+                                        this.bloc,
+                                        this.typesService,
+                                        addAuto
+                                      ),
                                       client(context, this.bloc),
                                       km(context, this.bloc, this.getSettingsPackage),
                                       package(context, this.bloc, this.packages),

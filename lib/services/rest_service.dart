@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:uService/models/DMS/marca_model.dart';
 import 'package:uService/models/DMS/vehicle_model.dart';
 import 'package:uService/models/agency_model.dart';
 import 'package:uService/models/auth_response.dart';
@@ -193,6 +194,27 @@ class RestService {
     List<TypeServiceModel> typesService = iterable.map((value) => TypeServiceModel.fromJson(value)).toList();
 
     return typesService;
+  }
+
+  Future<List<MarcaModel>> getMarcas() async {
+    var url = new Uri.https(this.apiurl, 'dms/marcas');
+
+    if (!this.envprod) {
+      url = new Uri.http(this.apiurl, 'dms/marcas');
+    }
+
+    var response = await http.get(url, headers: this.getHeader());
+
+    if (response.statusCode != 200) {
+      throw('Error inesperado, favor de intentr más tarde.');
+    }
+
+    Iterable iterable = jsonDecode(response.body);
+
+    List<MarcaModel> marcas = iterable.map((item) => MarcaModel.fromJson(item)).toList();
+
+
+    return marcas;
   }
 
   Future<List<ProductModel>> getProductsByAgency(int agencyId) async {

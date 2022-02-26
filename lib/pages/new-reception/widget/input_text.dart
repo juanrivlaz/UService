@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:uService/pages/agencies/bloc/agency_bloc.dart';
 
-Widget inputAgencyName(AgencyBloc bloc) {
+Widget inputText({
+  @required Stream stream,
+  @required Function(String) change,
+  @required TextEditingController controller
+}) {
   return StreamBuilder(
-    stream: bloc.nameStream,
+    stream: stream,
     builder: (BuildContext ctx, AsyncSnapshot snapshot) {
       return TextField(
-        controller: bloc.nameController,
+        controller: controller,
         keyboardType: TextInputType.text,
         enableSuggestions: false,
         autocorrect: false,
@@ -23,7 +26,7 @@ Widget inputAgencyName(AgencyBloc bloc) {
                 vertical: 10, horizontal: 16),
           errorText: snapshot.error
         ),
-        onChanged: bloc.changeName,
+        onChanged: change,
       );
     }
   );

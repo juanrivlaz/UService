@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:rxdart/subjects.dart';
 import 'package:uService/models/agency_model.dart';
 import 'package:uService/models/brand_model.dart';
 import 'package:uService/models/state_model.dart';
