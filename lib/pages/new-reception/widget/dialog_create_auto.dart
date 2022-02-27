@@ -149,27 +149,35 @@ Widget dialogCreateAuto(
                             child: StreamBuilder(
                                   stream: bloc.formValidStream,
                                   builder: (BuildContext ctxForm, AsyncSnapshot snpForm) {
-                                    return Opacity(
-                                      opacity: snpForm.hasData && snpForm.data ? 1 : .4,
-                                      child: ElevatedButton(
-                                        onPressed: snpForm.hasData && snpForm.data ? submit : null,
-                                        child: Text('Guardar', style: TextStyle(color: Colors.white)
-                                        ),
-                                        style: ButtonStyle(
-                                          padding: MaterialStateProperty.all(
-                                            EdgeInsets.symmetric(vertical: 15)
+                                    bool valid = snpForm.hasData && snpForm.data;
+
+                                    return StreamBuilder(
+                                      stream: bloc.loadingStream,
+                                      builder: (BuildContext ctxLoading, AsyncSnapshot<bool> snpLoading) {
+                                        bool loading = snpLoading.hasData && snpLoading.data;
+
+                                        return Opacity(
+                                          opacity: valid && !loading ? 1 : .5,
+                                          child: ElevatedButton(
+                                            onPressed: valid && !loading ? submit : null,
+                                            child: !loading ? Text('Guardar', style: TextStyle(color: Colors.white)) : CircularProgressIndicator(),
+                                            style: ButtonStyle(
+                                              padding: MaterialStateProperty.all(
+                                                EdgeInsets.symmetric(vertical: 15)
+                                              ),
+                                              backgroundColor: MaterialStateProperty.all(
+                                                Color.fromRGBO(19, 81, 216, 1)
+                                              ),
+                                              elevation: MaterialStateProperty.all(0),
+                                              shape: MaterialStateProperty.all(
+                                                RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.circular(20)
+                                                )
+                                              )
+                                            ),
                                           ),
-                                          backgroundColor: MaterialStateProperty.all(
-                                            Color.fromRGBO(19, 81, 216, 1)
-                                          ),
-                                          elevation: MaterialStateProperty.all(0),
-                                          shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(20)
-                                            )
-                                          )
-                                        ),
-                                      ),
+                                        );
+                                      }
                                     );
                                   },
                                 ),

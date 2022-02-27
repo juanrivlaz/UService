@@ -30,29 +30,30 @@ Widget init(
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
         ),
         Container(
-            margin: EdgeInsets.only(bottom: 15),
-            width: width(context),
-            child: StreamBuilder(
-              stream: bloc.typeServiceStream,
-              builder: (BuildContext ctxTypeService, AsyncSnapshot snpTypeService) {
-                return DropdownButtonFormField<int>(
-                  isExpanded: true,
-                  hint: Text('Seleccione un tipo'),
-                  value: snpTypeService.hasData ? snpTypeService.data : null,
-                  items: typesService.map((TypeServiceModel value) {
-                    return DropdownMenuItem<int>(
-                      value: value.id,
-                      child: new Text(value.label),
-                    );
-                  }).toList(),
-                  onChanged: bloc.changeTypeService,
-                  decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-                    border: OutlineInputBorder(),
-                  ),
-                );
-              },
-            )),
+          margin: EdgeInsets.only(bottom: 15),
+          width: width(context),
+          child: StreamBuilder(
+            stream: bloc.typeServiceStream,
+            builder: (BuildContext ctxTypeService, AsyncSnapshot<int> snpTypeService) {
+              return DropdownButtonFormField<int>(
+                isExpanded: true,
+                hint: Text('Seleccione un tipo'),
+                value: snpTypeService.hasData ? snpTypeService.data : null,
+                items: typesService.map((TypeServiceModel value) {
+                  return DropdownMenuItem<int>(
+                    value: value.id,
+                    child: new Text(value.label),
+                  );
+                }).toList(),
+                onChanged: bloc.changeTypeService,
+                decoration: const InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                  border: OutlineInputBorder(),
+                ),
+              );
+            },
+          )
+        ),
         Container(
           margin: EdgeInsets.all(25),
           child: Text('Comentario',

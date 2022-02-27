@@ -1,4 +1,6 @@
 import 'package:rxdart/rxdart.dart';
+import 'package:uService/models/DMS/marca_model.dart';
+import 'package:uService/models/DMS/vehicle_model.dart';
 import 'package:uService/utils/validators.dart';
 
 class AutoBloc with Validators {
@@ -25,12 +27,11 @@ class AutoBloc with Validators {
   Stream<bool>   get loadingStream => _loadingController.stream;
   Stream<bool>   get loadingDataStream => _loadingDataController.stream;
 
-  Stream<bool> get formValidStream => Rx.combineLatest5(
-    serieStream,
+  Stream<bool> get formValidStream => Rx.combineLatest4(
     placaStream,
     marcaStream,
     modelStream,
-    yearStream, (a, b, c, d, e) => true);
+    yearStream, (a, b, c, d) => true);
 
   Function(String) get changeSerie => _serieController.sink.add;
   Function(String) get changePlaca => _placaController.sink.add;
@@ -57,6 +58,17 @@ class AutoBloc with Validators {
     this.changeLoadingData(false);
   }
 
+  void clear() {
+    this._serieController = BehaviorSubject<String>();
+    this._placaController = BehaviorSubject<String>();
+    this._colorController = BehaviorSubject<String>();
+    this._marcaController = BehaviorSubject<int>();
+    this._modelController = BehaviorSubject<int>();
+    this._motorController = BehaviorSubject<String>();
+    this._cilindrosController = BehaviorSubject<String>();
+    this._yearController = BehaviorSubject<int>();
+  }
+
   Map<String, String> toJson() {
     return {
       'serie': serie,
@@ -67,6 +79,24 @@ class AutoBloc with Validators {
       'year' : year.toString(),
       'cilindros': cilindros
     };
+  }
+
+  VehicleModel toModel(List<MarcaModel> marcas) {
+    var marcaFind = marcas.firstWhere((element) => element.id == marca);
+    var modelFind = marcaFind.models.firstWhere((element) => element.id == model);
+
+    return VehicleModel.fromJson(
+      {
+        'id': '${DateTime.now().minute}${DateTime.now().second}',
+        'serie': serie,
+        'placas': placa,
+        'color': color,
+        'marca': marcaFind,
+        'model': modelFind.toJson(),
+        'year' : year,
+        'cilindros': cilindros
+      }
+    );
   }
 
   void disponse()

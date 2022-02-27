@@ -19,8 +19,12 @@ double fullWidth(BuildContext context) {
   return MediaQuery.of(context).size.width;
 }
 
-Widget carPackage(BuildContext context, ReceptionBloc bloc,
-    {bool isRecommended, SettingPackageModel package}) {
+Widget carPackage(
+  BuildContext context,
+  ReceptionBloc bloc,
+  Function next,
+  {bool isRecommended, SettingPackageModel package}
+) {
   return Container(
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(5.0),
@@ -56,8 +60,8 @@ Widget carPackage(BuildContext context, ReceptionBloc bloc,
           height: 120,
           child: Center(
             child: Text(
-                NumberFormat.currency(symbol: '\$ ')
-                    .format(package.getTotalByProduct()),
+                //NumberFormat.currency(symbol: '\$ ').format(package.getTotalByProduct()),
+                NumberFormat.currency(symbol: '\$ ').format(package.package.price),
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 30,
@@ -98,6 +102,7 @@ Widget carPackage(BuildContext context, ReceptionBloc bloc,
               onPressed: () {
                 bloc.changePackage(package);
                 bloc.updateResume();
+                next();
               }),
         )
       ],

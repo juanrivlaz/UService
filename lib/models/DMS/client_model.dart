@@ -1,6 +1,7 @@
 import 'package:uService/models/DMS/contact_model.dart';
 
 class ClientModel {
+  int id;
   String rfc;
   String address;
   String colony;
@@ -11,6 +12,7 @@ class ClientModel {
   ContactModel contact;
 
   ClientModel() {
+    this.id = 0;
     this.rfc = '';
     this.address = '';
     this.colony = '';
@@ -24,6 +26,7 @@ class ClientModel {
   factory ClientModel.fromJson(Map<String, dynamic> json) {
     ClientModel client = new ClientModel();
 
+    client.id = int.parse('${json['id'] ?? 0}');
     client.rfc = json['rfc'] ?? '';
     client.address = json['address'] ?? '';
     client.colony = json['colony'] ?? '';

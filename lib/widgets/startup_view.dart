@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:uService/models/startup_view_model.dart';
 import 'package:uService/providers/startup_view_provider.dart';
 

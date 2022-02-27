@@ -120,7 +120,11 @@ class AgenciesProcess {
   void getData() {
     this.agencyBloc.changeLoadingAgency(true);
 
-    Future.wait([this.restService.getStates(), this.restService.getBrands(), this.restService.getAgencies()]).then((value) {
+    Future.wait([
+      this.restService.getStates(),
+      this.restService.getBrands(),
+      this.restService.getAgencies()
+    ]).then((value) {
       this.agencyBloc.changeStates(value[0]);
       this.agencyBloc.changeBrands(value[1]);
       this.agencyBloc.changeListAgency(value[2]);

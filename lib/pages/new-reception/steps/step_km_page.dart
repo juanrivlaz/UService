@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:uService/pages/new-reception/bloc/reception_bloc.dart';
 
@@ -14,7 +13,13 @@ double width(BuildContext context) {
       : MediaQuery.of(context).size.width;
 }
 
-Widget km(BuildContext context, ReceptionBloc bloc, Function(int) getSettingsPackage) {
+Widget km(
+  BuildContext context,
+  List<int> kms,
+  ReceptionBloc bloc,
+  Function(int) getSettingsPackage,
+  Function next
+) {
   return SingleChildScrollView(
     physics: BouncingScrollPhysics(),
     child: Column(
@@ -33,25 +38,26 @@ Widget km(BuildContext context, ReceptionBloc bloc, Function(int) getSettingsPac
             stream: bloc.kmServiceStream,
             builder: (BuildContext ctxkm, AsyncSnapshot snpkm) {
               return Wrap(
-            spacing: 25,
-            runSpacing: 25,
-            alignment: WrapAlignment.center,
-            children: new List<int>.generate(30, (index) => index + 1).map((e) => TextButton(
-                style: TextButton.styleFrom(
-                  textStyle: const TextStyle(fontSize: 20),
-                  elevation: 2,
-                  backgroundColor: snpkm.hasData && snpkm.data == (e * 10000) ? Colors.blue[100] : Colors.white,
-                  padding: EdgeInsets.all(12),
-                  side: BorderSide(color: snpkm.hasData && snpkm.data == (e * 10000) ? Colors.blue[800] : Colors.black38, width: 1)
-                ),
-                onPressed: () {
-                  bloc.changeKmService(e * 10000);
-                  bloc.updateResume();
-                  getSettingsPackage(e * 10000);
-                },
-                child: Text('${NumberFormat.currency(symbol: '', decimalDigits: 0).format(e * 10000)} KM', style: TextStyle(fontSize: 22, color: Colors.black87)),
-              )).toList()
-          );
+                spacing: 25,
+                runSpacing: 25,
+                alignment: WrapAlignment.center,
+                children: kms.map((e) => TextButton(
+                    style: TextButton.styleFrom(
+                      textStyle: const TextStyle(fontSize: 20),
+                      elevation: 2,
+                      backgroundColor: snpkm.hasData && snpkm.data == e ? Colors.blue[100] : Colors.white,
+                      padding: EdgeInsets.all(12),
+                      side: BorderSide(color: snpkm.hasData && snpkm.data == e ? Colors.blue[800] : Colors.black38, width: 1)
+                    ),
+                    onPressed: () {
+                      bloc.changeKmService(e);
+                      bloc.updateResume();
+                      getSettingsPackage(e);
+                      next();
+                    },
+                    child: Text('${NumberFormat.currency(symbol: '', decimalDigits: 0).format(e)} KM', style: TextStyle(fontSize: 22, color: Colors.black87)),
+                  )).toList()
+              );
             },
           ),
         )

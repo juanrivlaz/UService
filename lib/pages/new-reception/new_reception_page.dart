@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uService/pages/new-reception/bloc/auto_bloc.dart';
+import 'package:uService/pages/new-reception/bloc/client_bloc.dart';
 import 'package:uService/pages/new-reception/steps/step_aditional_page.dart';
 import 'package:uService/pages/new-reception/steps/step_check_page.dart';
 import 'package:uService/pages/new-reception/steps/step_client_page.dart';
@@ -7,8 +8,11 @@ import 'package:uService/pages/new-reception/steps/step_init_page.dart';
 import 'package:uService/pages/new-reception/steps/step_km_page.dart';
 import 'package:uService/pages/new-reception/steps/step_package_page.dart';
 import 'package:uService/pages/new-reception/widget/dialog_create_auto.dart';
+import 'package:uService/pages/new-reception/widget/dialog_create_client.dart';
 import 'package:uService/pages/new-reception/widget/indicator_step.dart';
+import 'package:uService/services/navigation_serice.dart';
 import 'package:uService/services/process/reception_vehicle_process.dart';
+import 'package:uService/services/setup_service.dart';
 import 'package:uService/utils/preference_user.dart';
 
 class NewReceptionPage extends StatefulWidget {
@@ -21,6 +25,7 @@ class NewReceptionState extends State<NewReceptionPage>
 {
 
   AutoBloc autoBloc = new AutoBloc();
+  ClientBloc clientBloc = ClientBloc();
   PreferencesUser pref = new PreferencesUser();
   PageController _pageController = PageController(initialPage: 0);
   double _currentPage = 0.0;
@@ -55,7 +60,28 @@ class NewReceptionState extends State<NewReceptionPage>
     return false;
   }
 
-  void next() => animateScroll(this._currentPage.round() + 1);
+  void next() {
+    if (_currentPage == 0 && !(bloc.typeService > 0 && bloc.validVehicle)) {
+      showAlert('Selecciona un tipo de servicio y un vehiculo.');
+      
+      return;
+    } else if (_currentPage == 1) {
+      var auto = bloc.vehicleModel;
+      if (auto.client.id == 0) {
+        showAlert('Selecciona un cliente.');
+
+        return;
+      }
+    } else if (_currentPage == 2 && bloc.kmService == 0) {
+      showAlert('Selecciona un kilometraje.');
+
+      return;
+    } else {
+      animateScroll(this._currentPage.round() + 1);
+    }
+
+    animateScroll(this._currentPage.round() + 1);
+  }
 
   void previous() => animateScroll(this._currentPage.round() - 1);
 
@@ -69,14 +95,87 @@ class NewReceptionState extends State<NewReceptionPage>
         context, 
         autoBloc,
         marcas,
-        () {
-          print(autoBloc.toJson());
+        () async {
+          autoBloc.changeLoading(true);
+          await Future.delayed(Duration(seconds: 2));
+
+          var model = autoBloc.toModel(marcas);
+          var autos = this.bloc.vehicles;
+          autos.add(model);
+          this.bloc.changeVehicles(autos);
+
+          bloc.changeVehicle(model);
+          bloc.updateResume();
+
+          Navigator.of(context).pop();
+          autoBloc.clear();
+          autoBloc.changeLoading(false);
         },
         () => {
           Navigator.of(context).pop()
         }
       )
     );
+  }
+
+  void addClient() async {
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext ctx) => dialogCreateClinet(
+        context,
+        clientBloc,
+        () async {
+          clientBloc.changeLoading(true);
+          await Future.delayed(Duration(seconds: 2));
+          var client = clientBloc.toModel();
+
+          bloc.changeClient(client);
+
+          var clients = bloc.clients;
+          clients.add(client);
+          bloc.changeClients(clients);
+
+          var auto = bloc.vehicleModel;
+          auto.client = client;
+          bloc.changeVehicle(auto);
+          bloc.updateResume();
+
+          Navigator.of(context).pop();
+          clientBloc.clear();
+          clientBloc.changeLoading(false);
+        },
+        () => {
+          Navigator.of(context).pop()
+        }
+      )
+    );
+  }
+
+  void showAlert(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: Colors.redAccent,
+      content: Text(message, textAlign: TextAlign.center),
+    ));
+  }
+
+  void showSuccess() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        dismissDirection: DismissDirection.up,
+        backgroundColor: Colors.green,
+        content: Text('Su registro fue agregado correctamente', textAlign: TextAlign.center),
+      )
+    );
+  }
+
+  List<int> getKilometrajes() {
+    List<int> kilometrajes = [];
+    kilometrajes.add(5000);
+    kilometrajes.addAll(List<int>.generate(30, (index) => (index + 1) * 10000 ));
+
+    return kilometrajes;
   }
 
   @override
@@ -86,9 +185,16 @@ class NewReceptionState extends State<NewReceptionPage>
         centerTitle: true,
         title: Text('uService'),
         backgroundColor: Color.fromRGBO(19, 81, 216, 1),
-        leading:
-            IconButton(onPressed: previous, icon: Icon(Icons.arrow_back_ios)),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.done))],
+        leading: _currentPage >= 1 ? IconButton(onPressed: previous, icon: Icon(Icons.arrow_back_ios)) : null,
+        actions: [
+          IconButton(
+            onPressed: _currentPage == 5 ? () {
+              showSuccess();
+              appService<NavigationService>().goBack();
+            } : next,
+            icon: Icon(_currentPage == 5 ? Icons.done : Icons.navigate_next, size: _currentPage == 5 ? null : 35,)
+          )
+        ],
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -134,11 +240,10 @@ class NewReceptionState extends State<NewReceptionPage>
                           : Stack(
                               children: [
                                 Positioned.fill(
-                                    child: NotificationListener<
-                                        ScrollNotification>(
+                                  child: NotificationListener<ScrollNotification>(
                                   onNotification: _onScroll,
                                   child: PageView(
-                                    reverse: false,
+                                    physics: NeverScrollableScrollPhysics(),
                                     scrollDirection: Axis.horizontal,
                                     controller: this._pageController,
                                     onPageChanged: this.pageChange,
@@ -149,9 +254,19 @@ class NewReceptionState extends State<NewReceptionPage>
                                         this.typesService,
                                         addAuto
                                       ),
-                                      client(context, this.bloc),
-                                      km(context, this.bloc, this.getSettingsPackage),
-                                      package(context, this.bloc, this.packages),
+                                      client(
+                                        context,
+                                        this.bloc,
+                                        addClient
+                                      ),
+                                      km(
+                                        context,
+                                        getKilometrajes(),
+                                        this.bloc,
+                                        this.getSettingsPackage,
+                                        next
+                                      ),
+                                      package(context, this.bloc, this.packages, next),
                                       aditionals(context, this.bloc, this.showPresentation, products: this.products),
                                       checks(context, this.bloc, this.carSections)
                                     ],

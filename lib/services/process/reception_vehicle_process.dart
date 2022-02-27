@@ -37,13 +37,15 @@ class ReceptionVehicleProcess {
       this.restService.getProductsByAgency(1),
       this.restService.getCarSections(),
       this.restService.getVehicles(),
-      this.restService.getMarcas()
+      this.restService.getMarcas(),
+      this.restService.getClients()
     ]).then((value) {
       this.typesService = value[0];
       this.products = value[1];
       this.carSections = value[2];
       this.bloc.changeVehicles(value[3]);
       this.marcas = value[4];
+      this.bloc.changeClients(value[5]);
     }).whenComplete(() => this.bloc.changeLoadingData(false));
   }
 
@@ -73,7 +75,7 @@ class ReceptionVehicleProcess {
   }
 
   void getSettingsPackage(int km) {
-    this.restService.getSettingPackageByKM(km).then((value) {
+    this.restService.getSettingPackageByKM(km, bloc.vehicleModelId).then((value) {
       value.sort((a, b) => a.getTotalByProduct().compareTo(b.getTotalByProduct()));
       
       this.packages = value;

@@ -19,4 +19,13 @@ class ModeloModel {
       inactivo: int.parse('${json['inactivo'] ?? 0}')
     );
   }
+
+  Map<String, String> toJson() {
+    return {
+      'id': id.toString(),
+      'description': description,
+      'id_marca': idMarca.toString(),
+      'inactivo': inactivo.toString()
+    };
+  }
 }
