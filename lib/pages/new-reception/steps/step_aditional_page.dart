@@ -10,7 +10,7 @@ double width(BuildContext context) {
   }
 
   return MediaQuery.of(context).size.width > 700
-      ? MediaQuery.of(context).size.width * .55
+      ? MediaQuery.of(context).size.width * .8
       : MediaQuery.of(context).size.width;
 }
 

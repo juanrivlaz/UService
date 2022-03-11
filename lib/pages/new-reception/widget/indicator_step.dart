@@ -37,24 +37,6 @@ Widget indicatorStep(double currentPage) {
             : currentPage > 3
                 ? Colors.green[200]
                 : Colors.black12,
-      ),
-      Container(
-        width: 60,
-        height: 8,
-        color: currentPage == 4
-            ? Colors.blue[600]
-            : currentPage > 4
-                ? Colors.green[200]
-                : Colors.black12,
-      ),
-      Container(
-        width: 60,
-        height: 8,
-        color: currentPage == 5
-            ? Colors.blue[600]
-            : currentPage > 5
-                ? Colors.green[200]
-                : Colors.black12,
       )
     ],
   );

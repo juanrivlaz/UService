@@ -110,6 +110,7 @@ class ReceptionBloc with Validators {
     this.changeLoadingData(false);
     this.changePlayingPresentation(false);
     this.changeResumetext('Sin Vehiculo');
+    this.changeTypeService(1);
   }
 
   void updateResume() {

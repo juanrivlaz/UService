@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:uService/models/DMS/vehicle_model.dart';
+import 'package:uService/models/DMS/marca_model.dart';
+import 'package:uService/models/DMS/modelo_model.dart';
+import 'package:uService/models/input_select.dart';
 import 'package:uService/models/type_service_model.dart';
+import 'package:uService/pages/new-reception/bloc/auto_bloc.dart';
 import 'package:uService/pages/new-reception/bloc/reception_bloc.dart';
+import 'package:uService/pages/new-reception/widget/input_select.dart';
 
 double width(BuildContext context) {
 
@@ -17,8 +21,11 @@ double width(BuildContext context) {
 Widget init(
   BuildContext context,
   ReceptionBloc bloc,
+  AutoBloc autoBloc,
   List<TypeServiceModel> typesService,
-  Function addAuto
+  Function addAuto,
+  List<MarcaModel> marcas,
+  Function(int) selectVehicle
 ) {
   return SingleChildScrollView(
     physics: BouncingScrollPhysics(),
@@ -80,61 +87,64 @@ Widget init(
         ),
         Container(
           margin: EdgeInsets.all(25),
-          child: Row(
-            children: [
-              Expanded(
-                child: Center(
-                  child: Text(
-                    'Buscar vehiculo',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-                  ),
-                )
+          child: Center(
+            child: Text(
+              'Seleccionar vehiculo',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            ),
+          ),
+        ),
+        Container(
+          width: width(context),
+          margin: EdgeInsets.symmetric(vertical: 12, horizontal: 25),
+          child: Text('Marca', style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),),
+        ),
+        Container(
+          width: width(context),
+          margin: EdgeInsets.symmetric(horizontal: 25),
+          child: inputSelect(
+            stream: autoBloc.marcaStream,
+            change: autoBloc.changeMarca,
+            label: 'Seleccione una marca',
+            items: marcas.map((marca) => InputSelect(value: marca.id, label: marca.description)).toList()
+          )
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 12, horizontal: 25),
+          child: Text('Modelo', style: TextStyle(color: Colors.black54, fontWeight: FontWeight.w600),),
+        ),
+        StreamBuilder(
+          stream: autoBloc.marcaStream,
+          builder: (BuildContext ctx, AsyncSnapshot<int> snp) {
+            return Container(
+              width: width(context),
+              margin: EdgeInsets.symmetric(horizontal: 25),
+              child: inputSelect(
+                stream: autoBloc.modelStream,
+                change: (int value) {
+                  autoBloc.changeModel(value);
+                  selectVehicle(value);
+                },
+                label: 'Seleccione un modelo',
+                items: getModelos(marcas, snp.data).map((model) => InputSelect(value: model.id, label: model.description)).toList()
               ),
-              IconButton(onPressed: addAuto, icon: Icon(Icons.add_circle, size: 30))
-            ]
-          ),
+            );
+          },
         ),
-        Container(
-          margin: EdgeInsets.only(bottom: 25),
-          width: width(context),
-          child: Column(
-            children: [
-              Container(
-                child: TextFormField(
-                  decoration: InputDecoration(suffixIcon: Icon(Icons.search)),
-                ),
-              )
-            ],
-          ),
-        ),
-        Container(
-          width: width(context),
-          child: StreamBuilder(
-            stream: bloc.vehiclesStream,
-            builder: (BuildContext ctxVehicle, AsyncSnapshot snpVehicle) {
-
-              List<VehicleModel> data = snpVehicle.hasData ? snpVehicle.data : [];
-
-              return Column(
-                children: data.map((vehicle) => Column(
-                  children: [
-                    
-                    ListTile(
-                      onTap: () {
-                        bloc.changeVehicle(vehicle);
-                        bloc.updateResume();
-                      },
-                      title: Text('PLACAS: ${vehicle.placas}'),
-                      subtitle: Text('SERIE: ${vehicle.serie}'),
-                    ),
-                    Divider()
-                  ],
-                )).toList(),
-              );
-            },
-          ),
-        )
+        SizedBox(height: 60)
       ],
     ),
   );
+}
+
+
+List<ModeloModel> getModelos(List<MarcaModel> marcas, int idMarca) {
+
+  if (idMarca == null) return [];
+
+  MarcaModel marca = marcas.firstWhere((element) => element.id == idMarca);
+  marca.models.sort((a, b) => a.description.compareTo(b.description));
+
+  return marca.models;
+
 }

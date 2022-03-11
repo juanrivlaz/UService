@@ -11,7 +11,7 @@ double width(BuildContext context) {
   }
 
   return MediaQuery.of(context).size.width > 700
-      ? MediaQuery.of(context).size.width * .55
+      ? MediaQuery.of(context).size.width * .7
       : MediaQuery.of(context).size.width;
 }
 
@@ -37,15 +37,12 @@ Widget carPackage(
         ),
       ],
     ),
-    width: MediaQuery.of(context).orientation == Orientation.portrait
-        ? width(context)
-        : fullWidth(context) / (isRecommended ? 3 : 4),
+    width: width(context),
     child: Column(
       children: [
         Container(
           padding: EdgeInsets.all(24),
           color: HexColor.fromHex(package.package.color),
-          height: 70,
           child: Center(
             child: Text(package.package.name,
                 style: TextStyle(
@@ -78,10 +75,7 @@ Widget carPackage(
                       itemOfPackage(context,
                           isPrincipal: isRecommended,
                           name: product.name,
-                          width: MediaQuery.of(context).orientation ==
-                                  Orientation.portrait
-                              ? width(context)
-                              : fullWidth(context) / (isRecommended ? 3 : 4)),
+                          width: width(context)),
                       Divider()
                     ],
                   ))

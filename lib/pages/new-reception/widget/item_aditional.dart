@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 double width(BuildContext context) {
@@ -35,7 +34,7 @@ Widget itemAditinal(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-            width: width(context) - 410,
+            width: width(context) - 470,
             child: FittedBox(
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,
@@ -53,7 +52,7 @@ Widget itemAditinal(
                   child: Text(
                     '\$${NumberFormat.currency(symbol: '').format(price)}',
                     textAlign: TextAlign.end,
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 13),
                   ),
                 ),
                 GestureDetector(
@@ -79,23 +78,29 @@ Widget itemAditinal(
       ),
       value: active,
       onChanged: change,
-      secondary: 
-      Container(
-        alignment: Alignment.center, 
-        width: 110, 
-        height: 25,
-        decoration: BoxDecoration(
-          color: isnew ? Colors.green[300] : isrecomendate ? Colors.blue[300] : Colors.white,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-        child: Text(
-          isnew ? 'Nuevo' : isrecomendate ? 'Recomendado' : '',
-          style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
-              fontSize: 12),
-        ),
+      secondary: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            alignment: Alignment.center, 
+            width: 110,
+            decoration: BoxDecoration(
+              color: isnew ? Colors.green[300] : isrecomendate ? Colors.blue[300] : Colors.white,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+            child: Text(
+              isnew ? 'Nuevo' : isrecomendate ? 'Recomendado' : '',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+                fontSize: 12
+              ),
+            ),
+          )
+        ],
       ),
     ),
   );

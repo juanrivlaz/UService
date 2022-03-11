@@ -56,6 +56,7 @@ class AutoBloc with Validators {
   AutoBloc() {
     this.changeLoading(false);
     this.changeLoadingData(false);
+    this.changeMarca(1);
   }
 
   void clear() {
@@ -89,11 +90,11 @@ class AutoBloc with Validators {
       {
         'id': '${DateTime.now().minute}${DateTime.now().second}',
         'serie': serie,
-        'placas': placa,
+        'placas': placa ?? '-',
         'color': color,
         'marca': marcaFind,
         'model': modelFind.toJson(),
-        'year' : year,
+        'year' : year ?? 2017,
         'cilindros': cilindros
       }
     );

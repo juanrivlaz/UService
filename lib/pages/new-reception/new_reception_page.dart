@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:uService/pages/new-reception/bloc/auto_bloc.dart';
 import 'package:uService/pages/new-reception/bloc/client_bloc.dart';
 import 'package:uService/pages/new-reception/steps/step_aditional_page.dart';
-import 'package:uService/pages/new-reception/steps/step_check_page.dart';
-import 'package:uService/pages/new-reception/steps/step_client_page.dart';
 import 'package:uService/pages/new-reception/steps/step_init_page.dart';
 import 'package:uService/pages/new-reception/steps/step_km_page.dart';
 import 'package:uService/pages/new-reception/steps/step_package_page.dart';
@@ -65,14 +63,14 @@ class NewReceptionState extends State<NewReceptionPage>
       showAlert('Selecciona un tipo de servicio y un vehiculo.');
       
       return;
-    } else if (_currentPage == 1) {
+    }/* else if (_currentPage == 1) {
       var auto = bloc.vehicleModel;
       if (auto.client.id == 0) {
         showAlert('Selecciona un cliente.');
 
         return;
       }
-    } else if (_currentPage == 2 && bloc.kmService == 0) {
+    } */else if (_currentPage == 1 && bloc.kmService == 0) {
       showAlert('Selecciona un kilometraje.');
 
       return;
@@ -178,6 +176,18 @@ class NewReceptionState extends State<NewReceptionPage>
     return kilometrajes;
   }
 
+  void selectVehicle(int value) {
+    var model = autoBloc.toModel(marcas);
+    var autos = this.bloc.vehicles;
+    autos.add(model);
+    this.bloc.changeVehicles(autos);
+
+    bloc.changeVehicle(model);
+    bloc.updateResume();
+
+    autoBloc.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -188,11 +198,11 @@ class NewReceptionState extends State<NewReceptionPage>
         leading: _currentPage >= 1 ? IconButton(onPressed: previous, icon: Icon(Icons.arrow_back_ios)) : null,
         actions: [
           IconButton(
-            onPressed: _currentPage == 5 ? () {
+            onPressed: _currentPage == 3 ? () {
               showSuccess();
               appService<NavigationService>().goBack();
             } : next,
-            icon: Icon(_currentPage == 5 ? Icons.done : Icons.navigate_next, size: _currentPage == 5 ? null : 35,)
+            icon: Icon(_currentPage == 3 ? Icons.done : Icons.navigate_next, size: _currentPage == 3 ? null : 35,)
           )
         ],
       ),
@@ -251,14 +261,17 @@ class NewReceptionState extends State<NewReceptionPage>
                                       init(
                                         context,
                                         this.bloc,
+                                        this.autoBloc,
                                         this.typesService,
-                                        addAuto
+                                        addAuto,
+                                        marcas,
+                                        selectVehicle
                                       ),
-                                      client(
+                                      /*client(
                                         context,
                                         this.bloc,
                                         addClient
-                                      ),
+                                      ),*/
                                       km(
                                         context,
                                         getKilometrajes(),
@@ -268,7 +281,7 @@ class NewReceptionState extends State<NewReceptionPage>
                                       ),
                                       package(context, this.bloc, this.packages, next),
                                       aditionals(context, this.bloc, this.showPresentation, products: this.products),
-                                      checks(context, this.bloc, this.carSections)
+                                      /*checks(context, this.bloc, this.carSections)*/
                                     ],
                                   ),
                                 ))

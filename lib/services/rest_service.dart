@@ -202,7 +202,7 @@ class RestService {
     Iterable iterable = [
       {
         'id': 1,
-        'label': 'Servicio',
+        'label': 'Mantenimiento',
         'dms_code': 'service'
       },
       {
@@ -424,62 +424,72 @@ class RestService {
     Iterable iterable = [
       {
         'id': 1,
-        'name_moc': 'INFLADO LLANTAS CON NITROGENO',
-        'name_agency': 'INFLADO LLANTAS CON NITROGENO',
-        'code_agency': 'KKK',
+        'name_moc': 'LIMPIEZA A LA CAMARA DE COMBUSTION',
+        'name_agency': 'LIMPIEZA A LA CAMARA DE COMBUSTION',
+        'code_agency': 'LIM',
         'agency_id': 1,
         'path_presentation': 'https://www.carroya.com/noticias/sites/default/files/entradillas/482620708carroyainflarlasllantasdelcarro.png',
-        'price': 120,
+        'price': 699,
         'link_path_presentation': 'https://www.carroya.com/noticias/sites/default/files/entradillas/482620708carroyainflarlasllantasdelcarro.png'
       },
       {
         'id': 2,
-        'name_moc': 'SERVICIO A LA TRANSMISIÓN',
-        'name_agency': 'SERVICIO A LA TRANSMISIÓN',
-        'code_agency': 'KKK',
+        'name_moc': 'ALINEACION, BALANCEO, NITROGENO, ROTACION',
+        'name_agency': 'ALINEACION, BALANCEO, NITROGENO, ROTACION',
+        'code_agency': 'L41',
         'agency_id': 1,
         'path_presentation': 'https://dupesan.es/wp-content/uploads/2017/01/mantenimiento-caja-cambios-automatica2.jpg',
-        'price': 120,
+        'price': 699,
         'link_path_presentation': 'https://dupesan.es/wp-content/uploads/2017/01/mantenimiento-caja-cambios-automatica2.jpg'
       },
       {
         'id': 3,
-        'name_moc': 'SERVICIO AL AIRE ACONDICIONADO',
-        'name_agency': 'SERVICIO AL AIRE ACONDICIONADO',
-        'code_agency': 'KKK',
+        'name_moc': 'SERVICIO CVT',
+        'name_agency': 'SERVICIO CVT',
+        'code_agency': 'H71',
         'agency_id': 1,
         'path_presentation': 'https://dupesan.es/wp-content/uploads/2017/01/mantenimiento-caja-cambios-automatica2.jpg',
-        'price': 120,
+        'price': 3900,
         'link_path_presentation': 'https://dupesan.es/wp-content/uploads/2017/01/mantenimiento-caja-cambios-automatica2.jpg'
       },
       {
         'id': 4,
-        'name_moc': 'ALINEACIÓN y BALANCEO',
-        'name_agency': 'ALINEACIÓN y BALANCEO',
-        'code_agency': 'KKK',
+        'name_moc': 'SERVICIO TRANSMISION AUTOMATICA',
+        'name_agency': 'SERVICIO TRANSMISION AUTOMATICA',
+        'code_agency': 'H16',
         'agency_id': 1,
         'path_presentation': 'https://dupesan.es/wp-content/uploads/2017/01/mantenimiento-caja-cambios-automatica2.jpg',
-        'price': 120,
+        'price': 4100,
         'link_path_presentation': 'https://dupesan.es/wp-content/uploads/2017/01/mantenimiento-caja-cambios-automatica2.jpg'
       },
       {
         'id': 5,
-        'name_moc': 'KIT DE MOTOR Y COMBUSTIBLE',
-        'name_agency': 'KIT DE MOTOR Y COMBUSTIBLE',
-        'code_agency': 'KKK',
+        'name_moc': 'SERVICIO A/AC',
+        'name_agency': 'SERVICIO A/AC',
+        'code_agency': 'E39',
         'agency_id': 1,
         'path_presentation': 'https://dupesan.es/wp-content/uploads/2017/01/mantenimiento-caja-cambios-automatica2.jpg',
-        'price': 120,
+        'price': 1700,
         'link_path_presentation': 'https://dupesan.es/wp-content/uploads/2017/01/mantenimiento-caja-cambios-automatica2.jpg'
       },
       {
         'id': 6,
-        'name_moc': 'SERVICIO AL SISTEMA DE ENFRIAMIENTO',
-        'name_agency': 'SERVICIO AL SISTEMA DE ENFRIAMIENTO',
-        'code_agency': 'KKK',
+        'name_moc': 'ACONDICIONADOR DE MOTOR',
+        'name_agency': 'ACONDICIONADOR DE MOTOR',
+        'code_agency': 'Z02',
         'agency_id': 1,
         'path_presentation': 'https://dupesan.es/wp-content/uploads/2017/01/mantenimiento-caja-cambios-automatica2.jpg',
-        'price': 120,
+        'price': 470,
+        'link_path_presentation': 'https://dupesan.es/wp-content/uploads/2017/01/mantenimiento-caja-cambios-automatica2.jpg'
+      },
+      {
+        'id': 7,
+        'name_moc': 'LIMPIEZA Y LUBRICACION SIST ENFRIAMIENTO',
+        'name_agency': 'LIMPIEZA Y LUBRICACION SIST ENFRIAMIENTO',
+        'code_agency': 'Z04',
+        'agency_id': 1,
+        'path_presentation': 'https://dupesan.es/wp-content/uploads/2017/01/mantenimiento-caja-cambios-automatica2.jpg',
+        'price': 170,
         'link_path_presentation': 'https://dupesan.es/wp-content/uploads/2017/01/mantenimiento-caja-cambios-automatica2.jpg'
       }
     ];
@@ -1200,32 +1210,7 @@ class RestService {
   }
 
   Future<List<VehicleModel>> getVehicles({ String filter = '' }) async {
-    Iterable iterable = [
-      {
-        'serie': 'J81289398879876DDNKNANS',
-        'placas': 'JNU8093',
-        'kilometraje': 60000,
-        'motor': '2.0',
-        'color': 'verde',
-        'model': {
-          'id_marca': 1,
-          'description': '3',
-          'marca': {
-            'description': 'MAZDA'
-          }
-        },
-        'client': {
-          'id': -1,
-          'rfc': 'JJJJANNN',
-          'address': 'paseo de los olivos 918',
-          'colony': 'altagracia',
-          'city': 'zapopan',
-          'state': 'jalisco',
-          'postcode': '45130',
-          'name': 'juan daniel'
-        }
-      }
-    ];
+    Iterable iterable = [];
 
     List<VehicleModel> vehicles = iterable.map((value) => VehicleModel.fromJson(value)).toList();
 
