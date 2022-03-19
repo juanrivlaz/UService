@@ -14,7 +14,12 @@ double width(BuildContext context) {
       : MediaQuery.of(context).size.width;
 }
 
-Widget km(BuildContext context, ReceptionBloc bloc, Function(int) getSettingsPackage) {
+Widget km(
+  BuildContext context,
+  ReceptionBloc bloc,
+  Function(int) getSettingsPackage,
+  Function next
+) {
   return SingleChildScrollView(
     physics: BouncingScrollPhysics(),
     child: Column(
@@ -48,6 +53,8 @@ Widget km(BuildContext context, ReceptionBloc bloc, Function(int) getSettingsPac
                   bloc.changeKmService(e * 10000);
                   bloc.updateResume();
                   getSettingsPackage(e * 10000);
+
+                  next();
                 },
                 child: Text('${NumberFormat.currency(symbol: '', decimalDigits: 0).format(e * 10000)} KM', style: TextStyle(fontSize: 22, color: Colors.black87)),
               )).toList()

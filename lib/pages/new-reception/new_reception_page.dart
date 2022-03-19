@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:uService/pages/new-reception/bloc/auto_bloc.dart';
+import 'package:uService/pages/new-reception/bloc/client_bloc.dart';
 import 'package:uService/pages/new-reception/steps/step_aditional_page.dart';
 import 'package:uService/pages/new-reception/steps/step_check_page.dart';
 import 'package:uService/pages/new-reception/steps/step_client_page.dart';
 import 'package:uService/pages/new-reception/steps/step_init_page.dart';
 import 'package:uService/pages/new-reception/steps/step_km_page.dart';
 import 'package:uService/pages/new-reception/steps/step_package_page.dart';
+import 'package:uService/pages/new-reception/widget/dialog_create_auto.dart';
+import 'package:uService/pages/new-reception/widget/dialog_create_client.dart';
 import 'package:uService/pages/new-reception/widget/indicator_step.dart';
+import 'package:uService/services/navigation_serice.dart';
 import 'package:uService/services/process/reception_vehicle_process.dart';
+import 'package:uService/services/setup_service.dart';
 import 'package:uService/utils/preference_user.dart';
 
 class NewReceptionPage extends StatefulWidget {
@@ -17,6 +23,9 @@ class NewReceptionPage extends StatefulWidget {
 
 class NewReceptionState extends State<NewReceptionPage>
     with ReceptionVehicleProcess {
+
+  AutoBloc autoBloc = new AutoBloc();
+  ClientBloc clientBloc = ClientBloc();
   PreferencesUser pref = new PreferencesUser();
   PageController _pageController = PageController(initialPage: 0);
   double _currentPage = 0.0;
@@ -57,6 +66,94 @@ class NewReceptionState extends State<NewReceptionPage>
 
   void pageChange(int value) => setState(() => this._currentPage = value * 1.0);
 
+  void addAuto() async {
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext ctx) => dialogCreateAuto(
+        context, 
+        autoBloc,
+        marcas,
+        () async {
+          autoBloc.changeLoading(true);
+          await Future.delayed(Duration(seconds: 2));
+
+          var model = autoBloc.toModel(marcas);
+          var autos = this.bloc.vehicles;
+          autos.add(model);
+          bloc.changeVehicles(autos);
+          bloc.changeVehicle(model);
+          bloc.updateResume();
+
+          Navigator.of(context).pop();
+          autoBloc.clear();
+          autoBloc.changeLoading(false);
+
+        },
+        () => {
+          Navigator.of(context).pop()
+        }
+      )
+    );
+  }
+
+  void addClient() async {
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext ctx) => dialogCreateClinet(
+        context,
+        clientBloc,
+        () async {
+          clientBloc.changeLoading(true);
+          await Future.delayed(Duration(seconds: 2));
+          var client = clientBloc.toModel();
+
+          bloc.changeClient(client);
+
+          var clients = bloc.clients;
+          clients.add(client);
+          bloc.changeClients(clients);
+
+          var auto = bloc.vehicleModel;
+          auto.client = client;
+          bloc.changeVehicle(auto);
+          bloc.updateResume();
+
+          Navigator.of(context).pop();
+          clientBloc.clear();
+          clientBloc.changeLoading(false);
+        },
+        () => {
+          Navigator.of(context).pop()
+        }
+      )
+    );
+  }
+
+  void showSuccess() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        dismissDirection: DismissDirection.up,
+        backgroundColor: Colors.green,
+        content: Text('Su registro fue agregado correctamente', textAlign: TextAlign.center),
+      )
+    );
+  }
+
+  void selectVehicle(int value) {
+    var model = autoBloc.toModel(marcas);
+    var autos = this.bloc.vehicles;
+    autos.add(model);
+    this.bloc.changeVehicles(autos);
+
+    bloc.changeVehicle(model);
+    bloc.updateResume();
+
+    autoBloc.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,9 +161,17 @@ class NewReceptionState extends State<NewReceptionPage>
         centerTitle: true,
         title: Text('uService'),
         backgroundColor: Color.fromRGBO(19, 81, 216, 1),
-        leading:
-            IconButton(onPressed: previous, icon: Icon(Icons.arrow_back_ios)),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.done))],
+        leading: _currentPage >= 1 ? 
+            IconButton(onPressed: previous, icon: Icon(Icons.arrow_back_ios)) : null,
+        actions: [
+          IconButton(
+            onPressed: _currentPage == 5  ? () {
+              showSuccess();
+              appService<NavigationService>().goBack();
+            } : next,
+            icon: Icon(_currentPage == 5 ? Icons.done : Icons.navigate_next)
+          )
+        ],
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -121,10 +226,10 @@ class NewReceptionState extends State<NewReceptionPage>
                                     controller: this._pageController,
                                     onPageChanged: this.pageChange,
                                     children: [
-                                      init(context, this.bloc, this.typesService),
-                                      client(context, this.bloc),
-                                      km(context, this.bloc, this.getSettingsPackage),
-                                      package(context, this.bloc, this.packages),
+                                      init(context, this.bloc, this.typesService, addAuto),
+                                      client(context, this.bloc, addClient),
+                                      km(context, this.bloc, this.getSettingsPackage, next),
+                                      package(context, this.bloc, this.packages, next),
                                       aditionals(context, this.bloc, this.showPresentation, products: this.products),
                                       checks(context, this.bloc, this.carSections)
                                     ],

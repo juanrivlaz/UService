@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:uService/models/DMS/client_model.dart';
 import 'package:uService/models/DMS/vehicle_model.dart';
 import 'package:uService/models/car_section_model.dart';
 import 'package:uService/models/product_model.dart';
@@ -30,6 +31,8 @@ class ReceptionBloc with Validators {
   BehaviorSubject<VehicleModel> _vehicleController = BehaviorSubject<VehicleModel>();
   BehaviorSubject<String> _resumetextController = BehaviorSubject<String>();
   BehaviorSubject<SettingPackageModel> _packageController = BehaviorSubject<SettingPackageModel>();
+  BehaviorSubject<List<ClientModel>> _clientsController = BehaviorSubject<List<ClientModel>>();
+  BehaviorSubject<ClientModel> _clientController = BehaviorSubject<ClientModel>();
 
   TextEditingController customerCommentController = new TextEditingController();
   TextEditingController technicalCommentController = new TextEditingController();
@@ -52,6 +55,8 @@ class ReceptionBloc with Validators {
   Stream<VehicleModel> get vehicleStream => _vehicleController.stream;
   Stream<String> get resumetextStream => _resumetextController.stream;
   Stream<SettingPackageModel> get packageStream => _packageController.stream;
+  Stream<List<ClientModel>> get clientsStream => _clientsController.stream;
+  Stream<ClientModel> get clientStream => _clientController.stream;
 
   Function(int) get changeTypeService => _typeServiceController.sink.add;
   Function(String) get changeCustomerComment => _customerCommentController.sink.add;
@@ -71,6 +76,8 @@ class ReceptionBloc with Validators {
   Function(VehicleModel) get changeVehicle => _vehicleController.sink.add;
   Function(String) get changeResumetext => _resumetextController.sink.add;
   Function(SettingPackageModel) get changePackage => _packageController.sink.add;
+  Function(List<ClientModel>) get changeClients => _clientsController.sink.add;
+  Function(ClientModel) get changeClient => _clientController.sink.add;
 
   int get typeService => _typeServiceController.valueOrNull ?? 0;
   String get customerComment => _customerCommentController.valueOrNull ?? '';
@@ -85,20 +92,29 @@ class ReceptionBloc with Validators {
   bool get loadingData => _loadingDataController.valueOrNull ?? false;
   bool get playingPresentation => _playingPresentationController.valueOrNull ?? false;
   VideoPlayerController get videoPlayer => _videoplayerController.valueOrNull ?? VideoPlayerController;
+
+  bool get validVehicle => _vehicleController.valueOrNull != null;
+
+  VehicleModel get vehicleModel => _vehicleController.valueOrNull ?? VehicleModel.fromJson({});
+  int get vehicleModelId => _vehicleController.valueOrNull != null ? _vehicleController.value.modelId : 0;
   String get vehicle => _vehicleController.valueOrNull != null ? _vehicleController.value.placas : 'Sin Vehiculo'; 
   String get client => _vehicleController.valueOrNull != null ? _vehicleController.value.client.name : '';
   String get package => _packageController.valueOrNull != null ? _packageController.value.package.name : '';
   double get totalPackage => _packageController.valueOrNull != null ? _packageController.value.getTotalByProduct() : 0;
+  List<VehicleModel> get vehicles => _vehiclesController.valueOrNull ?? [];
+  List<ClientModel> get clients => _clientsController.valueOrNull ?? [];
+  ClientModel get clientModel => _clientController.valueOrNull ?? ClientModel.fromJson({});
 
   ReceptionBloc() {
     this.changeLoading(false);
     this.changeLoadingData(false);
     this.changePlayingPresentation(false);
     this.changeResumetext('Sin Vehiculo');
+    this.changeTypeService(1);
   }
 
   void updateResume() {
-    var total = this.totalPackage;
+    var total = _packageController.valueOrNull != null ? _packageController.value.package.price : 0; //this.totalPackage;
     var totalAditionals = this.aditional.fold(0, (value, element) => value + element.price);
 
     total += totalAditionals;
@@ -125,5 +141,8 @@ class ReceptionBloc with Validators {
     _vehiclesController?.close();
     _vehicleController?.close();
     _resumetextController?.close();
+    _packageController?.close();
+    _clientsController?.close();
+    _clientController?.close();
   }
 }

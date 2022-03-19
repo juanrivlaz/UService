@@ -18,7 +18,7 @@ double fullWidth(BuildContext context) {
   return MediaQuery.of(context).size.width;
 }
 
-Widget package(BuildContext context, ReceptionBloc bloc, List<SettingPackageModel> packages) {
+Widget package(BuildContext context, ReceptionBloc bloc, List<SettingPackageModel> packages, Function next) {
   return SingleChildScrollView(
     physics: BouncingScrollPhysics(),
     child: Column(
@@ -43,6 +43,7 @@ Widget package(BuildContext context, ReceptionBloc bloc, List<SettingPackageMode
             children: packages.map((package) => carPackage(
               context, 
               bloc,
+              next,
               isRecommended: package.package.name == 'INTERMEDIO',
               package: package
             )).toList()

@@ -1,4 +1,4 @@
-package com.zonadeprivilegios.uservice
+package com.zonadeprivilegios.fulldemo
 
 import io.flutter.embedding.android.FlutterActivity
 

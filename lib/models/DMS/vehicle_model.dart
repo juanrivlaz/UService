@@ -1,9 +1,11 @@
 import 'package:uService/models/DMS/client_model.dart';
 
 class VehicleModel {
+  int id;
   String serie;
   String placas;
   int brandId;
+  int modelId;
   String brandName;
   int kilometraje;
   String model;
@@ -28,12 +30,22 @@ class VehicleModel {
   factory VehicleModel.fromJson(Map<String, dynamic> json) {
     VehicleModel vehicle = new VehicleModel();
 
+    vehicle.id = int.parse('${json['id'] ?? 0}');
     vehicle.serie = json['serie'] ?? '';
     vehicle.placas = json['placas'] ?? '';
-    vehicle.brandId = int.parse((json['brand_id'] ?? 0).toString());
-    vehicle.brandName = json['brand_name'] ?? '';
+
+    if (json['model'] != null) {
+      vehicle.brandId = int.parse((json['model']['id_marca'] ?? 0).toString());
+      vehicle.model = json['model']['description'] ?? '';
+      vehicle.modelId = int.parse('${json['model']['id'] ?? 0}');
+
+      if (json['model']['marca'] != null) {
+        vehicle.brandName = json['model']['marca']['description'] ?? '';
+      }
+    }
+    
     vehicle.kilometraje = int.parse((json['kilometraje'] ?? 0).toString());
-    vehicle.model = json['model'] ?? '';
+    
     vehicle.motor = json['motor'] ?? '';
     vehicle.year = int.parse((json['year'] ?? 0).toString());
     vehicle.color = json['color'] ?? '';

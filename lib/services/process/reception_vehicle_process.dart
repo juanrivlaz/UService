@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:uService/models/DMS/marca_model.dart';
 import 'package:uService/models/car_section_model.dart';
 import 'package:uService/models/product_model.dart';
 import 'package:uService/models/setting_package_model.dart';
@@ -20,6 +21,7 @@ class ReceptionVehicleProcess {
   List<ProductModel> products = [];
   List<CarSectionModel> carSections = [];
   List<SettingPackageModel> packages = [];
+  List<MarcaModel> marcas = [];
   RestService restService = new RestService();
 
   void init(BuildContext context) {
@@ -34,12 +36,15 @@ class ReceptionVehicleProcess {
       this.restService.getTypesService(), 
       this.restService.getProductsByAgency(1),
       this.restService.getCarSections(),
-      this.restService.getVehicles()
+      this.restService.getVehicles(),
+      this.restService.getMarcas()
     ]).then((value) {
       this.typesService = value[0];
       this.products = value[1];
       this.carSections = value[2];
       this.bloc.changeVehicles(value[3]);
+      this.marcas = value[4];
+      this.bloc.changeClients(value[5]);
     }).whenComplete(() => this.bloc.changeLoadingData(false));
   }
 

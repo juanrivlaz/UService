@@ -19,7 +19,7 @@ double fullWidth(BuildContext context) {
   return MediaQuery.of(context).size.width;
 }
 
-Widget carPackage(BuildContext context, ReceptionBloc bloc,
+Widget carPackage(BuildContext context, ReceptionBloc bloc, Function next,
     {bool isRecommended, SettingPackageModel package}) {
   return Container(
     decoration: BoxDecoration(
@@ -98,6 +98,7 @@ Widget carPackage(BuildContext context, ReceptionBloc bloc,
               onPressed: () {
                 bloc.changePackage(package);
                 bloc.updateResume();
+                next();
               }),
         )
       ],

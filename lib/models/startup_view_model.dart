@@ -14,7 +14,7 @@ class StartupViewModel extends ChangeNotifier {
       if (loggedUser) {
         _navigationService.navigateToAndRemoveHistory( _pref.activeRoute != '' ? _pref.activeRoute : 'receptios');
       } else {
-        _navigationService.navigateToAndRemoveHistory('login');
+        _navigationService.navigateToAndRemoveHistory('receptios');
       }
     });
   }

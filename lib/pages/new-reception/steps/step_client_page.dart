@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uService/models/DMS/client_model.dart';
 import 'package:uService/pages/new-reception/bloc/reception_bloc.dart';
 
 double width(BuildContext context) {
@@ -12,16 +13,24 @@ double width(BuildContext context) {
       : MediaQuery.of(context).size.width;
 }
 
-Widget client(BuildContext context, ReceptionBloc bloc) {
+Widget client(BuildContext context, ReceptionBloc bloc, Function addClient) {
   return SingleChildScrollView(
     physics: BouncingScrollPhysics(),
     child: Column(
       children: [
         Container(
+          width: width(context),
           margin: EdgeInsets.all(25),
-          child: Text(
-            'Buscar cliente',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+          child: Row(
+            children: [
+              Expanded(child: Center(
+                child: Text(
+                  'Buscar cliente',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                ),
+              )),
+              IconButton(onPressed: addClient, icon: Icon(Icons.add_circle))
+            ],
           ),
         ),
         Container(
@@ -39,14 +48,29 @@ Widget client(BuildContext context, ReceptionBloc bloc) {
         ),
         Container(
           width: width(context),
-          child: Column(
-            children: [
-              ListTile(
-                title: Text('NOMBRE: Juan Daniel Rivera Lazaro'),
-                subtitle: Text('RFC: RILJ930805'),
-              ),
-              Divider()
-            ],
+          child: StreamBuilder(
+            stream: bloc.clientsStream,
+            builder: (BuildContext ctxClients, AsyncSnapshot<List<ClientModel>> snpClient) {
+              List<ClientModel> clients = snpClient.hasData ? snpClient.data : [];
+
+              return Column(
+                children: clients.map((client) => Column(
+                  children: [
+                    ListTile(
+                      onTap: () {
+                        bloc.changeClient(client);
+                        var auto = bloc.vehicleModel;
+                        auto.client = client;
+                        bloc.changeVehicle(auto);
+                        bloc.updateResume();
+                      },
+                      title: Text('NOMBRE: ${client.name}'),
+                      subtitle: Text('RFC: ${client.rfc}'),
+                    )
+                  ],
+                )).toList(),
+              );
+            },
           ),
         )
       ],

@@ -6,6 +6,7 @@ class PackageModel {
   int id;
   String name;
   String color;
+  double price;
   List<SettingPackageModel> settings;
 
   PackageModel() {
@@ -14,6 +15,7 @@ class PackageModel {
     this.name = '';
     this.color = '';
     this.settings = [];
+    this.price = 0;
   }
 
   factory PackageModel.fromJson(Map<String, dynamic> json) {
@@ -22,6 +24,7 @@ class PackageModel {
     package.id = int.parse((json['id'] ?? 0).toString());
     package.name = json['name'] ?? '';
     package.color = json['color'] ?? '';
+    package.price = double.parse('${json['price'] ?? 0}');
     package.settings = ((json['settings'] ?? []) as Iterable).map((setting) => SettingPackageModel.fromJson(setting)).toList();
 
     return package;
